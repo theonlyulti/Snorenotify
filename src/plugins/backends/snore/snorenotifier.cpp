@@ -105,9 +105,10 @@ void SnoreNotifier::slotInvoked()
 
 void SnoreNotifier::setup()
 {
+    int corner = value("corner").toInt();
     for(int i=0;i<m_widgets.size();++i)
     {
-        NotifyWidget *w = new NotifyWidget(i);
+        NotifyWidget *w = new NotifyWidget(i, corner);
         m_widgets[i] = w;
         connect(w, SIGNAL(dismissed()), this, SLOT(slotDismissed()));
         connect(w, SIGNAL(invoked()), this, SLOT(slotInvoked()));
@@ -119,6 +120,7 @@ bool SnoreNotifier::initialize(SnoreCore *snore)
 {
     if(SnoreBackend::initialize(snore))
     {
+        setDefaultValue("corner", 1);
         return metaObject()->invokeMethod(this, "setup", Qt::QueuedConnection);
     }
     return false;

@@ -34,7 +34,7 @@ class NotifyWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit NotifyWidget(int pos, QWidget *parent = 0);
+    explicit NotifyWidget(int pos, int corner, QWidget *parent = 0);
     ~NotifyWidget();
 
     void display(const Snore::Notification &notification);
@@ -65,11 +65,15 @@ private:
     Ui::NotifyWidget *ui;
     QTimer *m_moveTimer;
     QPoint m_dest;
+    QPoint m_start;
+    int m_xDir;
+    int m_yDir;
     QRect m_desktop;
     TomahawkUtils::DpiScaler *m_scaler;
     Snore::Notification m_notification;
 
     int m_id;
+    int m_corner;
 };
 
 #endif // NOTIFYWIDGET_H

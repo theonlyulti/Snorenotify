@@ -26,11 +26,12 @@
 
 using namespace Snore;
 
-NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
+NotifyWidget::NotifyWidget(int pos, int corner, QWidget *parent) :
     QWidget(parent, Qt::SplashScreen | Qt::WindowStaysOnTopHint),
     ui(new Ui::NotifyWidget),
     m_desktop(QDesktopWidget().availableGeometry()),
-    m_id(pos)
+    m_id(pos),
+    m_corner(corner)
 {
     ui->setupUi(this);
 
@@ -40,7 +41,33 @@ NotifyWidget::NotifyWidget(int pos,QWidget *parent) :
 
     setFixedSize( m_scaler->scaled(300, 80));
 
-    m_dest = QPoint(m_desktop.topRight().x() - width(), m_desktop.topRight().y() + (m_scaler->scaledY(10) + height()) * pos);
+    switch(m_corner)
+    {
+    case 0:
+        m_dest = QPoint(m_desktop.topLeft().x(), m_desktop.topLeft().y() + (m_scaler->scaledY(10) + height()) * m_id);
+        m_start = QPoint(m_desktop.topLeft().x() - width(), m_desktop.topLeft().y() + (m_scaler->scaledY(10) + height()) * m_id );
+        m_xDir = 1;
+        m_yDir = 0;
+        break;
+    case 1:
+        m_dest = QPoint(m_desktop.topRight().x() - width(), m_desktop.topRight().y() + (m_scaler->scaledY(10) + height()) * m_id);
+        m_start = QPoint(m_desktop.topRight().x(), m_desktop.topRight().y() + (m_scaler->scaledY(10) + height()) * m_id);
+        m_xDir = -1;
+        m_yDir = 0;
+        break;
+    case 2:
+        m_dest = QPoint(m_desktop.bottomRight().x() - width(), m_desktop.bottomRight().y() - (m_scaler->scaledY(10) + height()) * m_id);
+        m_start = QPoint(m_desktop.bottomRight().x(), m_desktop.bottomRight().y() + (m_scaler->scaledY(10) + height()) * m_id);
+        m_xDir = -1;
+        m_yDir = 0;
+        break;
+    case 3:
+        m_dest = QPoint(m_desktop.bottomLeft().x(), m_desktop.bottomLeft().y() - (m_scaler->scaledY(10) + height()) * m_id);
+        m_start = QPoint(m_desktop.bottomLeft().x() - width(), m_desktop.bottomLeft().y() + (m_scaler->scaledY(10) + height()) * m_id);
+        m_xDir = 1;
+        m_yDir = 0;
+        break;
+    }
 }
 
 NotifyWidget::~NotifyWidget()
@@ -52,7 +79,7 @@ NotifyWidget::~NotifyWidget()
 void NotifyWidget::display(const Notification &notification)
 {
     update(notification);
-    move(m_desktop.topRight().x(), m_desktop.topRight().y() + (m_scaler->scaledY(10) + height()) * m_id);
+    move(m_start);
     show();
     m_moveTimer = new QTimer(this);
     m_moveTimer->setInterval(2);
@@ -88,7 +115,7 @@ int NotifyWidget::id()
 
 void NotifyWidget::slotMove()
 {
-    move(pos().x()-1, pos().y());
+    move(pos().x() + m_xDir, pos().y() + m_yDir);
     if(m_dest == pos())
     {
         m_moveTimer->deleteLater();
