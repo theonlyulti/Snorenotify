@@ -43,7 +43,7 @@ public:
 
     static void registerMetaTypes();
 public:
-    SnoreCorePrivate(QSystemTrayIcon *trayIcon);
+    SnoreCorePrivate(QSettings *settings, const QString &prefix);
     ~SnoreCorePrivate();
     const Application defaultApplication() const;
 
@@ -60,6 +60,7 @@ public:
      * @return whether the backend can update a notification
      */
     bool primaryBackendCanUpdateNotification() const;
+
 
 signals:
     void applicationRegistered(const Snore::Application&);
@@ -81,6 +82,10 @@ private:
     QSystemTrayIcon *m_trayIcon;
 
     Application m_defaultApp;
+
+    QSettings *m_settings;
+
+    QString m_settingsPrefix;
 };
 }
 
