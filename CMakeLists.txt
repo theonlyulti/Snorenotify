@@ -36,8 +36,6 @@ else(KDE4_FOUND)
 endif(KDE4_FOUND)
 
 
-find_package( CryptoPP )
-find_package( Boost COMPONENTS system thread)
 
 find_package(Doxygen)
 
