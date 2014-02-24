@@ -75,12 +75,34 @@ private:
 #endif
         return out;
     }
+
+    static inline const QStringList pluginFileFilters()
+    {
+        QStringList out;
+        foreach(const QString extention,  pluginExtentions())
+        {
+            out << QString("libsnore_*.%1").arg(extention);
+        }
+        return out;
+    }
+
+    static inline const QStringList pluginFileFilters(Snore::SnorePlugin::PluginTypes type)
+    {
+        QStringList out;
+        foreach(const QString extention,  pluginExtentions())
+        {
+            out << QString("libsnore_%1_*.%2").arg(typeToString(type).toLower(), extention);
+        }
+        return out;
+    }
+
     static inline QSettings &cache()
     {
         static QSettings *_cache = NULL;
         if(_cache == NULL)
         {
             _cache = new QSettings("SnoreNotify","libsnore");
+            snoreDebug( SNORE_DEBUG ) << _cache->fileName();
             _cache->beginGroup( SnoreCorePrivate::computeHash(pluginDir().absolutePath().toLatin1()));
         }
         return *_cache;
