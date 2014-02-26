@@ -112,16 +112,17 @@ void SnoreNotifier::slotProcessQueue()
     {
         foreach (NotifyWidget *w, m_widgets)
         {
-            bool free = false;
             if(w->acquire())
             {
                 Notification notification = m_queue.takeFirst();
                 w->display(notification);
                 notification.hints().setPrivateValue(this, "id", w->id());
                 startTimeout(notification);
-                free = true;
+                if(m_queue.isEmpty())
+                {
+                    return;
+                }
             }
-            snoreDebug( SNORE_DEBUG ) << w << free;
         }
     }
 
